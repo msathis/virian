@@ -2,10 +2,20 @@ use crate::instructions::Opcode;
 
 #[derive(Debug)]
 pub struct VM {
+    //Array of registers simulating hardware registers
     registers: [i32; 32],
+
+    //Program counter tracks current program instruction byte executing
     pc: usize,
+
+    //Bytes of the program
     program: Vec<u8>,
+
+    //Remainder value
     remainder: u32,
+
+    //Equality check result of the last operation
+    equal: bool,
 }
 
 impl VM {
@@ -15,6 +25,7 @@ impl VM {
             pc: 0,
             program: vec![],
             remainder: 0,
+            equal: false,
         }
     }
 
@@ -71,6 +82,62 @@ impl VM {
             Opcode::JMPB => {
                 let target = self.registers[self.next_8_bits() as usize] as usize;
                 self.pc -= target;
+            }
+            Opcode::EQ => {
+                let reg1 = self.registers[self.next_8_bits() as usize] as usize;
+                let reg2 = self.registers[self.next_8_bits() as usize] as usize;
+
+                self.equal = reg1 == reg2;
+                self.next_8_bits();
+            }
+            Opcode::NEQ => {
+                let reg1 = self.registers[self.next_8_bits() as usize] as usize;
+                let reg2 = self.registers[self.next_8_bits() as usize] as usize;
+
+                self.equal = reg1 != reg2;
+                self.next_8_bits();
+            }
+            Opcode::LT => {
+                let reg1 = self.registers[self.next_8_bits() as usize] as usize;
+                let reg2 = self.registers[self.next_8_bits() as usize] as usize;
+
+                self.equal = reg1 < reg2;
+                self.next_8_bits();
+            }
+            Opcode::LTQ => {
+                let reg1 = self.registers[self.next_8_bits() as usize] as usize;
+                let reg2 = self.registers[self.next_8_bits() as usize] as usize;
+
+                self.equal = reg1 <= reg2;
+                self.next_8_bits();
+            }
+            Opcode::GT => {
+                let reg1 = self.registers[self.next_8_bits() as usize] as usize;
+                let reg2 = self.registers[self.next_8_bits() as usize] as usize;
+
+                self.equal = reg1 > reg2;
+                self.next_8_bits();
+            }
+            Opcode::GTQ => {
+                let reg1 = self.registers[self.next_8_bits() as usize] as usize;
+                let reg2 = self.registers[self.next_8_bits() as usize] as usize;
+
+                self.equal = reg1 >= reg2;
+                self.next_8_bits();
+            }
+            Opcode::JEQ => {
+                let target = self.registers[self.next_8_bits() as usize] as usize;
+
+                if self.equal {
+                    self.pc = target;
+                }
+            }
+            Opcode::JNEQ => {
+                let target = self.registers[self.next_8_bits() as usize] as usize;
+
+                if !self.equal {
+                    self.pc = target;
+                }
             }
             _ => {
                 println!("Invalid code encountered");
@@ -162,5 +229,28 @@ mod tests {
         test_vm.program = vec![0, 0, 0, 4, 0, 1, 0, 2, 8, 0, 0, 0];
         test_vm.run_once();
         assert_eq!(test_vm.pc, 6);
+    }
+
+    #[test]
+    fn test_eq_opcode() {
+        let mut test_vm = VM::new();
+        test_vm.registers[0] = 10;
+        test_vm.registers[1] = 10;
+        test_vm.program = vec![9, 0, 1, 0, 9, 0, 1, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.equal, true);
+        test_vm.registers[1] = 20;
+        test_vm.run_once();
+        assert_eq!(test_vm.equal, false);
+    }
+
+    #[test]
+    fn test_jeq_opcode() {
+        let mut test_vm = VM::new();
+        test_vm.registers[0] = 7;
+        test_vm.equal = true;
+        test_vm.program = vec![15, 0, 0, 0, 17, 0, 0, 0, 17, 0, 0, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.pc, 7);
     }
 }
