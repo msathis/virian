@@ -3,7 +3,7 @@ use crate::instructions::Opcode;
 #[derive(Debug)]
 pub struct VM {
     //Array of registers simulating hardware registers
-    registers: [i32; 32],
+    pub registers: [i32; 32],
 
     //Program counter tracks current program instruction byte executing
     pc: usize,
@@ -164,8 +164,11 @@ impl VM {
         self.pc += 2;
         return result;
     }
-}
 
+    pub fn add_byte(&mut self, byte: u8) {
+        self.program.push(byte);
+    }
+}
 
 #[cfg(test)]
 mod tests {

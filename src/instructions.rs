@@ -40,21 +40,19 @@ impl From<u8> for Opcode {
             14 => return Opcode::GTQ,
             15 => return Opcode::JEQ,
             16 => return Opcode::JNEQ,
-            _ => return Opcode::IGL
+            _ => return Opcode::IGL,
         }
     }
 }
 
 #[derive(Debug, PartialEq)]
 pub struct Instruction {
-    opcode: Opcode
+    opcode: Opcode,
 }
 
 impl Instruction {
     pub fn new(opcode: Opcode) -> Instruction {
-        Instruction {
-            opcode
-        }
+        Instruction { opcode }
     }
 }
 
