@@ -9,7 +9,7 @@ named!(pub register<CompleteStr, Token>,
       opcode: alpha1 >>
       (
         {
-            Token::new(Opcode::from(opcode))
+            Token::opcode(Opcode::from(opcode))
         }
       )
   )
