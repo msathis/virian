@@ -1,5 +1,5 @@
-use nom::types::CompleteStr;
 use nom::*;
+use nom::types::CompleteStr;
 
 use crate::assembler::opcode_parser::opcode;
 use crate::assembler::operand_parser::integer_operand;
@@ -77,6 +77,53 @@ named!(pub instruction_one<CompleteStr, AssemblerInstruction>,
     )
 );
 
+named!(pub instruction_two<CompleteStr, AssemblerInstruction>,
+    do_parse!(
+        o: opcode >>
+        opt!(multispace) >>
+        (
+            AssemblerInstruction {
+                label: None,
+                opcode: o,
+                operand1: None,
+                operand2: None,
+                operand3: None
+            }
+        )
+    )
+);
+
+named!(pub instruction_three<CompleteStr, AssemblerInstruction>,
+    do_parse!(
+        o: opcode >>
+        r: register >>
+        i: register >>
+        j: register >>
+        (
+            AssemblerInstruction {
+                label: None,
+                opcode: o,
+                operand1: Some(r),
+                operand2: Some(i),
+                operand3: Some(j)
+            }
+        )
+    )
+);
+
+named!(pub instruction<CompleteStr, AssemblerInstruction>,
+    do_parse!(
+        ins: alt!(
+            instruction_one |
+            instruction_two |
+            instruction_three
+        ) >>
+        (
+            ins
+        )
+    )
+);
+
 #[cfg(test)]
 mod tests {
     use crate::instructions::Opcode;
@@ -95,6 +142,32 @@ mod tests {
                     opcode: Token::Op { code: Opcode::LOAD },
                     operand1: Some(Token::Register { reg_num: 0 }),
                     operand2: Some(Token::IntegerOperand { value: 100 }),
+                    operand3: None,
+                }
+            ))
+        );
+    }
+
+    #[test]
+    fn test_str_to_opcode() {
+        let opcode = Opcode::from(CompleteStr("load"));
+        assert_eq!(opcode, Opcode::LOAD);
+        let opcode = Opcode::from(CompleteStr("illegal"));
+        assert_eq!(opcode, Opcode::IGL);
+    }
+
+    #[test]
+    fn test_parse_instruction_form_two() {
+        let result = instruction_two(CompleteStr("hlt\n"));
+        assert_eq!(
+            result,
+            Ok((
+                CompleteStr(""),
+                AssemblerInstruction {
+                    label: None,
+                    opcode: Token::Op { code: Opcode::HLT },
+                    operand1: None,
+                    operand2: None,
                     operand3: None,
                 }
             ))

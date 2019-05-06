@@ -1,7 +1,7 @@
-use nom::types::CompleteStr;
 use nom::*;
+use nom::types::CompleteStr;
 
-use crate::assembler::instruction_parser::{instruction_one, AssemblerInstruction};
+use crate::assembler::instruction_parser::{AssemblerInstruction, instruction};
 
 #[derive(Debug, PartialEq)]
 pub struct Program {
@@ -14,13 +14,14 @@ impl Program {
         for instruction in &self.instructions {
             program.append(&mut instruction.to_bytes());
         }
+        println!("Bytes {:?}", program);
         program
     }
 }
 
 named!(pub program<CompleteStr, Program>,
     do_parse!(
-        instructions: many1!(instruction_one) >>
+        instructions: many1!(instruction) >>
         (
             Program {
                 instructions: instructions
