@@ -1,0 +1,8 @@
+[package]
+name = "virian"
+version = "0.1.0"
+authors = ["sathis <sathis62@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+nom = "^4.2"
