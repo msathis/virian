@@ -1,12 +1,16 @@
 use std::io;
 use std::num::ParseIntError;
 
+use nom::types::CompleteStr;
+
+use crate::assembler::program_parser::program;
 use crate::VM;
 
 #[derive(Debug)]
 pub struct REPL {
     vm: VM,
     commands_buffer: Vec<String>,
+
 }
 
 impl REPL {
@@ -18,7 +22,7 @@ impl REPL {
     }
 
     pub fn run(&mut self) -> io::Result<()> {
-        println!("Enter your command. Type .help for help");
+        println!("Welcome to virian. Enter your command.");
         let mut buffer = String::new();
 
         loop {
@@ -44,37 +48,14 @@ impl REPL {
                     std::process::exit(0);
                 }
                 _ => {
-                    let results = self.parse_hex(buffer.as_ref());
-                    match results {
-                        Ok(bytes) => {
-                            for byte in bytes {
-                                self.vm.add_byte(byte)
-                            }
-                        }
-                        Err(_e) => println!(
-                            "Unable to decode hex string. Please enter 4 groups of 2 hex characters."
-                        ),
-                    };
+                    let (_, results) = program(CompleteStr(buffer)).unwrap();
+                    let bytes = results.to_bytes();
+                    for byte in bytes {
+                        self.vm.add_byte(byte)
+                    }
                     self.vm.run_once();
                 }
             }
         }
-    }
-
-    fn parse_hex(&self, i: &str) -> Result<Vec<u8>, ParseIntError> {
-        let split = i.split(" ").collect::<Vec<&str>>();
-        let mut results: Vec<u8> = vec![];
-        for hex_string in split {
-            let byte = u8::from_str_radix(&hex_string, 16);
-            match byte {
-                Ok(result) => {
-                    results.push(result);
-                }
-                Err(e) => {
-                    return Err(e);
-                }
-            }
-        }
-        Ok(results)
     }
 }

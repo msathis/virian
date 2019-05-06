@@ -6,7 +6,7 @@ use crate::assembler::Token;
 
 /// Parser for integer numbers, which we preface with `#` in our assembly language:
 /// #100
-named!(integer_operand<CompleteStr, Token>,
+named!(pub integer_operand<CompleteStr, Token>,
     ws!(
         do_parse!(
             tag!("#") >>
@@ -20,6 +20,7 @@ named!(integer_operand<CompleteStr, Token>,
 
 #[test]
 fn test_parse_integer_operand() {
+
     // Test a valid integer operand
     let result = integer_operand(CompleteStr("#10"));
     assert_eq!(result.is_ok(), true);

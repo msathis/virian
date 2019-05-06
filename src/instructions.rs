@@ -1,6 +1,6 @@
 use nom::types::CompleteStr;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Opcode {
     LOAD,
     ADD,

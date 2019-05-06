@@ -6,7 +6,7 @@ use crate::assembler::Token;
 
 /// Parser for integer numbers, which we preface with `#` in our assembly language:
 /// #100
-named!(register<CompleteStr, Token>,
+named!(pub register<CompleteStr, Token>,
     ws!(
         do_parse!(
             tag!("$") >>
