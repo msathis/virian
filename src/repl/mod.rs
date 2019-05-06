@@ -10,7 +10,6 @@ use crate::VM;
 pub struct REPL {
     vm: VM,
     commands_buffer: Vec<String>,
-
 }
 
 impl REPL {

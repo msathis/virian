@@ -1,5 +1,5 @@
-use nom::*;
 use nom::types::CompleteStr;
+use nom::*;
 
 use crate::assembler::opcode_parser::opcode;
 use crate::assembler::operand_parser::integer_operand;

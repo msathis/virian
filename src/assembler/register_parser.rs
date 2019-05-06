@@ -1,6 +1,6 @@
-use nom::*;
 use nom::digit;
 use nom::types::CompleteStr;
+use nom::*;
 
 use crate::assembler::Token;
 

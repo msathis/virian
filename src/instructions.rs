@@ -73,7 +73,6 @@ impl<'a> From<CompleteStr<'a>> for Opcode {
     }
 }
 
-
 #[derive(Debug, PartialEq)]
 pub struct Instruction {
     opcode: Opcode,

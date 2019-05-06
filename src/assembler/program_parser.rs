@@ -1,11 +1,11 @@
-use nom::*;
 use nom::types::CompleteStr;
+use nom::*;
 
-use crate::assembler::instruction_parser::{AssemblerInstruction, instruction_one};
+use crate::assembler::instruction_parser::{instruction_one, AssemblerInstruction};
 
 #[derive(Debug, PartialEq)]
 pub struct Program {
-    instructions: Vec<AssemblerInstruction>
+    instructions: Vec<AssemblerInstruction>,
 }
 
 impl Program {
@@ -35,10 +35,7 @@ fn test_parse_program() {
     assert_eq!(result.is_ok(), true);
     let (leftover, p) = result.unwrap();
     assert_eq!(leftover, CompleteStr(""));
-    assert_eq!(
-        1,
-        p.instructions.len()
-    );
+    assert_eq!(1, p.instructions.len());
 }
 
 #[test]

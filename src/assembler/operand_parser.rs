@@ -1,6 +1,6 @@
-use nom::*;
 use nom::digit;
 use nom::types::CompleteStr;
+use nom::*;
 
 use crate::assembler::Token;
 
@@ -20,7 +20,6 @@ named!(pub integer_operand<CompleteStr, Token>,
 
 #[test]
 fn test_parse_integer_operand() {
-
     // Test a valid integer operand
     let result = integer_operand(CompleteStr("#10"));
     assert_eq!(result.is_ok(), true);

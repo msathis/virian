@@ -1,5 +1,5 @@
-use nom::*;
 use nom::types::CompleteStr;
+use nom::*;
 
 use crate::assembler::Token;
 use crate::instructions::Opcode;
