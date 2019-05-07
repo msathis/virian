@@ -5,5 +5,9 @@ Follows VM tutorial from https://blog.subnetzero.io/post/building-language-vm-pa
 ## How to Run
 `cargo run --release`
 
+## Features
+
+1. Nom based parsing
+
 ## Tests
 `cargo test`
